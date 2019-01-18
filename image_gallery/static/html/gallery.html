@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/app.css" />
+
+  <title>Jackson and Erica Wedding - Image Gallery</title>
+</head>
+
+<body>
+  <header>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2" focusable="false">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <strong>Image Gallery</strong>
+        </a>
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Jackson Cunha
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main">
+    <section class="jumbotron text-center">
+      <div class="container">
+        <h1 class="jumbotron-heading">Jackson and Erica Wedding</h1>
+
+        <div class="row">
+          <div class="col sm-12 text-muted">
+            <span>Erica Lays is a collaborator.</span>
+            <a href="#">View all collaborators</a> or
+            <a href="#">invite a new collaborator</a>.
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col sm-12 text-muted">
+            <span>Rondinele, Shara and 39 other people are guests</span>.
+            <a href="#">View all guests</a> or
+            <a href="#">invite a new guest</a>.
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col sm-12 text-muted">
+            <span>Rondinele, Shara and 40 other people are invited to this
+              gallery</span>. <a href="#">View all</a>.
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col sm-12 text-muted">
+            <label class="align-middle">Display options:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="viewOption" id="inlineCheckbox1" value="1" />
+              <label class="form-check-label" for="inlineCheckbox1">Aproved</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="viewOption" id="inlineCheckbox2" value="2" />
+              <label class="form-check-label" for="inlineCheckbox2">Blocked</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="viewOption" id="inlineCheckbox3" value="3" />
+              <label class="form-check-label" for="inlineCheckbox3">Review</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col sm-12 text-muted">
+            <button id="btnUpload" class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#modalUpload">
+              <i class="fas fa-image"></i> Upload a new photo
+            </button>
+          </div>
+        </div>        
+    </section>
+
+    <div class="py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+              <img class="thumbnail" src="../image/cartagena-01.jpg" data-index="0" data-toggle="modal" data-target="#modalCarousel" />
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-heart"></i> Like
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-thumbs-up"></i> Aprove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+              <img class="thumbnail" src="../image/cartagena-02.jpg" data-index="1" data-toggle="modal" data-target="#modalCarousel" />
+              <div class="card-body">                
+                <div class="d-flex justify-content-between align-items-center">
+                  <button type="button" class="btn btn-sm btn-outline-secondary active">
+                    <i class="fas fa-heart"></i> You liked it
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-thumbs-down"></i> Block
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+              <div class="card mb-4 shadow-sm">
+                <img class="thumbnail" src="../image/cartagena-03.jpg" data-index="2" data-toggle="modal" data-target="#modalCarousel" />
+                <div class="card-body">                
+                  <div class="d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn btn-sm btn-outline-secondary active">
+                      <i class="fas fa-heart"></i> You liked it
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-thumbs-down"></i> Block
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        <a class="btn btn-secondary float-right" href="#"><i class="fas fa-chevron-up"></i> Back to top</a>
+      </p>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="modalUpload" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload a new photo</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="#" method="POST" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <div class="input-group">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="imageInput" accept="image/jpeg" placeholder="Choose pic" />
+                    <label class="custom-file-label" for="imageInput">Choose a photo</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 text-center" id="imagePreview"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <input type="text" class="form-control" placeholder="Description" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalCarousel" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <form action="#" method="POST" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-12 text-center">
+                  <img class="photo" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 text-center" id="imagePreview"></div>
+              </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+              <p class="text-muted w-50">Texto descritivo</p>
+              <div class="btn-group">
+                <button id="btnPrevious" type="button" class="btn btn-outline-primary">Previous</button>
+                <button id="btnNext" type="button" class="btn btn-outline-primary">Next</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+    crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            let img = '<img class="rounded preview m-3" src="' + e.target.result + '" />'
+            $('#imagePreview').html(img);
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+      
+      $("#imageInput").change(function () {
+        readURL(this);
+      });
+      
+      $("#btnUpload").click(function () {
+        $('#modalUpload form').get(0).reset();
+        $('#imagePreview').html('');
+      });
+
+      $('.thumbnail').click(function() {
+        let indexThumbnail = parseInt($(this).attr('data-index'));
+        $('#modalCarousel .photo').attr('src', this.src).attr('data-index', indexThumbnail);        
+      });
+
+      $('#btnNext').click(function() {
+        let indexPhoto = parseInt($('#modalCarousel .photo').attr('data-index'));
+        let last = $('.thumbnail').last().attr('data-index');
+        let next = (indexPhoto == last) ? 0 : indexPhoto + 1;
+        $('#modalCarousel .photo').attr('src', $('.thumbnail').get(next).src).attr('data-index', next);
+      });
+
+      $('#btnPrevious').click(function() {
+        let indexPhoto = parseInt($('#modalCarousel .photo').attr('data-index'));
+        let last = $('.thumbnail').last().attr('data-index');
+        let previous = (indexPhoto == 0) ? last : indexPhoto - 1;
+        $('#modalCarousel .photo').attr('src', $('.thumbnail').get(previous).src).attr('data-index', previous);
+      });
+
+    });
+  </script>
+</body>
+
+</html>

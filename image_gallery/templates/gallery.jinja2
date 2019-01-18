@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="{{ request.static_url('image_gallery:static/css/app.css') }}"/>
+
+  <title>{{gallery.description}} - Image Gallery</title>
+</head>
+
+<body>
+  <header>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="{{request.route_url('gallery_home')}}" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2" focusable="false">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <strong>Image Gallery</strong>
+        </a>
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            {{current_user_name}}
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{{request.route_url('logout')}}"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main">
+    <section class="jumbotron text-center">
+      <div class="container">
+        <h1 class="jumbotron-heading">{{gallery.description}}</h1>
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            {{owner.name}} (<em>{{owner.email}}</em>) is the owner of this gallery.
+          </div>
+        </div>
+
+        {% if isOwner %}
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            <a href="#" id="linkInviteCollaborator">Add or remove a collaborator</a>.
+          </div>
+        </div>
+        {% endif %}
+
+        {% if isOwner or isCollaborator %}
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            <a href="#" id="linkInviteGuest">Add or remove a guest</a>.
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            <a href="#" data-toggle="modal" data-target="#modalUserList">View all users invited</a>.
+          </div>
+        </div>
+
+        {% if isOwner or isCollaborator %}
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            <label class="align-middle">Display options:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="viewOption" id="inputViewApproved" value="" checked />
+              <label class="form-check-label" for="inputViewApproved">Approved</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="viewOption" id="inputViewBlock" value="block" />
+              <label class="form-check-label" for="inputViewBlock">Blocked</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="viewOption" id="inputViewReview" value="review" />
+              <label class="form-check-label" for="inputViewReview">Review</label>
+            </div>
+          </div>
+        </div>
+       {% endif %}
+
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            <label class="align-middle">Ordering options:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="orderOption" id="inputOrderDate" value="date" checked />
+              <label class="form-check-label" for="inputOrderDate">Date</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="orderOption" id="inputOrderLikes" value="likes" />
+              <label class="form-check-label" for="inputOrderLikes">Likes</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 text-muted">
+            <button id="btnUpload" class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#modalUpload">
+              <i class="fas fa-image"></i> Upload a new photo
+            </button>
+          </div>
+        </div>        
+      </div>
+    </section>
+
+    <div class="py-5 bg-light">
+      <div class="container">
+        <div class="row" id="containerPhotos">
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        <a class="btn btn-secondary float-right" href="#"><i class="fas fa-chevron-up"></i> Back to top</a>
+      </p>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="modalUpload" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload a new photo</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="#" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="gallery" value="{{gallery.id}}" />
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <div class="input-group">
+                  <div class="custom-file">
+                    <input type="file" name="file" class="custom-file-input" id="imageInput" accept="image/jpeg" />
+                    <label class="custom-file-label" for="imageInput">Choose a photo</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 text-center" id="imagePreview"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <input type="text" name="description" class="form-control" placeholder="Description" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <input type="date" name="date" class="form-control" placeholder="Date (month/day/year)" />
+              </div>
+            </div>
+            <div class="alert alert-dismissible fade hide" role="alert">
+              <span class="alert-msg"></span>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalCarousel" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <form action="#" method="POST" enctype="multipart/form-data">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-12 text-center">
+                  <img class="photo" />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+              <p class="text-muted w-50"></p>
+              <div class="btn-group">
+                <button id="btnPrevious" type="button" class="btn btn-outline-primary">Previous</button>
+                <button id="btnNext" type="button" class="btn btn-outline-primary">Next</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalUserInvite" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+          <h5 class="modal-title">Upload a new User</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-8 form-group">
+                <input id="inputUser" type="text" class="form-control" placeholder="E-mail" />
+                <input id="inputTypeInvite" type="hidden" />
+              </div>
+              <div class="col-sm-2 form-group">
+                <button id="btnAddUser" type="button" class="btn btn-outline-primary btn-block">Add</button>
+              </div>
+              <div class="col-sm-2 form-group">
+                <button id="btnRemoveUser" type="button" class="btn btn-outline-primary btn-block">Remove</button>
+              </div>
+            </div>
+            <div class="alert fade" style="display:none" role="alert">
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalUserList" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">All users invited</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group">
+              <li class="list-group-item">Owner: {{owner.name}} (<em>{{owner.email}}</em>)</li>
+
+              {% for c in collaborators %}
+              <li class="list-group-item">Collaborator: {{c.name}} (<em>{{c.email}}</em>)</li>
+              {% endfor %}
+
+              {% for g in guests %}
+              <li class="list-group-item">Guest: {{g.name}} (<em>{{g.email}}</em>)</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+    crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      function changeStatus(id, newStatus) {
+        $.get(`{{request.route_url('gallery_update_review_status')}}?id=${id}&status=${newStatus}`, function(data) {
+          if(data.result === true) {
+            loadPhotos();
+          } else {
+            console.log('Status was not changed.')
+          }
+        });
+      }
+
+      function like(id) {
+        $.get(`{{request.route_url('gallery_like_photo')}}?id=${id}`, function(data) {
+          if(data.result === true) {
+            loadPhotos();
+          } else {
+            console.log('Action do not happened.')
+          }
+        });
+      }
+
+      function inviteUser(option) {
+        let gallery = {{gallery.id}};
+        let user = $('#inputUser').val();
+        let type = $('#inputTypeInvite').val();
+
+        $.get(`{{request.route_url('gallery_invite_user')}}?gallery=${gallery}&user=${user}&option=${option}&type=${type}`, function(data) {
+          if(data.result === true) {
+            $('#inputUser').val('');
+
+            $('#modalUserInvite .alert p').html('User invited/removed successfully!');
+            $('#modalUserInvite .alert').removeClass('alert-warning').addClass('alert-success show').show().alert();
+          } else {
+            $('#modalUserInvite .alert p').html('User not invited/removed.');
+            $('#modalUserInvite .alert').removeClass('alert-success').addClass('alert-warning show').show().alert();
+          }
+        });
+      }
+
+      $('#linkInviteCollaborator').click(function(){
+        $('#inputUser').val('');
+        $('#inputTypeInvite').val('collaborator');
+        $('#modalUserInvite h5').html('Add or remove a collaborator');
+        $('#modalUserInvite').modal('show');
+      });
+
+      $('#linkInviteGuest').click(function(){
+        $('#inputUser').val('');
+        $('#inputTypeInvite').val('guest');
+        $('#modalUserInvite h5').html('Add or remove a guest');
+        $('#modalUserInvite').modal('show');
+      });
+
+      $('#btnAddUser').click(function(){
+        inviteUser('add');
+      });
+
+      $('#btnRemoveUser').click(function(){
+        inviteUser('remove');
+      });
+
+      $('input[name="viewOption"][value="{{displayOption}}"]').prop('checked', true);
+      $('input[name="orderOption"][value="{{orderOption}}"]').prop('checked', true);
+
+      function loadPhotos() {
+        let valDisplay = $('input[name="viewOption"]:checked').val();
+        let valOrder = $('input[name="orderOption"]:checked').val();
+        let ajax = `{{request.route_url('gallery_detail_json', id=gallery.id)}}?display=${valDisplay}&order=${valOrder}`;
+        $.get(ajax, function( data ) {
+          if(data) {
+            $('#containerPhotos').html('');
+
+            if(data.photos.length == 0) {
+              $('#containerPhotos').html(`
+                <div class="col-md-12">
+                  <div class="alert alert-secondary" role="alert">
+                    No photos to show yet.
+                  </div>
+                </div>
+              `);
+            } else {
+              data.photos.map(function(p, index){
+                let id = p.id;
+                let description = p.description;
+                let uploader = p.uploader;
+                let url = p.url;
+                let date = p.date;
+                let likes = p.countLikes;
+                let userLiked = p.userLiked;
+                let reviewStatus = p.reviewStatus;
+                let btn = '';
+
+                if(reviewStatus == 0) {
+                  btn = `
+                    <button type="button" data-id="${id}" class="btn btn-sm btn-outline-secondary btn-approve-photo">
+                      <i class="fas fa-thumbs-up"></i> Approve
+                    </button>
+                    <button type="button" data-id="${id}" class="btn btn-sm btn-outline-secondary btn-block-photo">
+                      <i class="fas fa-thumbs-down"></i> Block
+                    </button>
+                  `;
+                } else if(reviewStatus == 1) {
+                  let cssClass = '';
+                  let label = 'Like';
+
+                  if(userLiked) {
+                    cssClass = 'active';
+                    label = 'You liked it';
+                  }
+
+                  btn = `
+                    <button type="button" data-id="${id}" class="btn btn-sm btn-outline-secondary btn-like-photo ${cssClass}">
+                      <i class="fas fa-heart"></i> ${label}
+                    </button>
+                    <button type="button" data-id="${id}" class="btn btn-sm btn-outline-secondary btn-block-photo">
+                      <i class="fas fa-thumbs-down"></i> Block
+                    </button>
+                  `;
+                } else if(reviewStatus == 2) {
+                  btn = `
+                    <button type="button" data-id="${id}" class="btn btn-sm btn-outline-secondary btn-approve-photo">
+                      <i class="fas fa-thumbs-up"></i> Approve
+                    </button>
+                  `;
+                }
+
+                var html = `
+                  <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                      <div class="thumbnail">
+                        <img src="${url}" alt="${description}" data-index="${index}" data-toggle="modal" data-target="#modalCarousel" />
+                      </div>
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                          ${btn}
+                        </div>
+                        <small class="text-muted"><strong>Date:</strong> ${date}. <strong>Likes:</strong> ${likes}. <strong>Uploader:</strong> ${uploader}.</small>
+                      </div>
+                    </div>
+                  </div>
+                `;
+
+                return html;
+              })
+              .forEach(function(item) {
+                $('#containerPhotos').append(item);
+              });
+
+              $('.thumbnail img').click(function() {
+                let indexThumbnail = parseInt($(this).attr('data-index'));
+                $('#modalCarousel .photo').attr('src', this.src).attr('data-index', indexThumbnail);
+                $('#modalCarousel .modal-footer p').html(this.alt);
+              });
+
+              $('.btn-approve-photo').click(function() {
+                changeStatus($(this).attr('data-id'), 1);
+              });
+
+              $('.btn-block-photo').click(function() {
+                changeStatus($(this).attr('data-id'), 2);
+              });
+
+              $('.btn-like-photo').click(function() {
+                like($(this).attr('data-id'));
+              });
+            }
+          }
+        });
+      }
+
+      $('.form-check-input').click(function(){
+        loadPhotos();
+      });
+
+      loadPhotos();
+
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            let img = '<img class="rounded preview m-3" src="' + e.target.result + '" />'
+            $('#imagePreview').html(img);
+          }
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+      
+      $("#imageInput").change(function () {
+        readURL(this);
+      });
+      
+      $("#btnUpload").click(function () {
+        $('#modalUpload form').get(0).reset();
+        $('#imagePreview').html('');
+      });
+
+      $('#btnNext').click(function() {
+        let img = $('#modalCarousel .photo');
+        let thumbnails = $('.thumbnail img');
+
+        let indexPhoto = parseInt(img.attr('data-index'));
+        let last = thumbnails.last().attr('data-index');
+        let next = (indexPhoto == last) ? 0 : indexPhoto + 1;
+        let nextThumbnail = thumbnails.get(next);
+
+        img.attr('src', nextThumbnail.src).attr('data-index', next);
+        $('#modalCarousel .modal-footer p').html($(nextThumbnail).attr('alt'));
+      });
+
+      $('#btnPrevious').click(function() {
+        let img = $('#modalCarousel .photo');
+        let thumbnails = $('.thumbnail img');
+
+        let indexPhoto = parseInt(img.attr('data-index'));
+        let last = thumbnails.last().attr('data-index');
+        let previous = (indexPhoto == 0) ? last : indexPhoto - 1;
+        let previousThumbnail = thumbnails.get(previous);
+
+        img.attr('src', previousThumbnail.src).attr('data-index', previous);
+        $('#modalCarousel .modal-footer p').html(previousThumbnail.alt);
+      });
+
+      $('#modalUpload form').on('submit', function(e) {
+          e.preventDefault();
+
+          $.ajax({
+             url: "{{request.route_url('gallery_save_photo')}}",
+             type: 'POST',
+             data: new FormData(e.target),
+             processData: false,
+             contentType: false,
+             success: function(response) {
+                $('#modalUpload .alert .alert-msg').html('Gallery saved!');
+                $('#modalUpload .alert').removeClass('alert-warning')
+                                        .removeClass('hide')
+                                        .addClass('alert-success show').alert();
+                e.target.reset();
+                loadPhotos();
+             },
+             error: function(jqXHR, textStatus, errorMessage) {
+                 console.log(errorMessage);
+             }
+          });
+        });
+
+      $('.modal').on('hidden.bs.modal', function (e) {
+        $('.modal .alert').hide();
+      });
+
+      $('#modalUserInvite').on('hidden.bs.modal', function (e) {
+        if($('#inputUser').val()) {
+          location.reload();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
