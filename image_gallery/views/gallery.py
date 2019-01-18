@@ -114,7 +114,7 @@ class GalleryViews:
             url = s3.generate_presigned_url(
                 ClientMethod='get_object',
                 Params={
-                    'Bucket': 'image-gallery-app',
+                    'Bucket': request.registry.settings['amazons3.bucketname'],
                     'Key': p[0].file_name
                 }
             )
@@ -161,7 +161,7 @@ class GalleryViews:
                 url = s3.generate_presigned_url(
                     ClientMethod='get_object',
                     Params={
-                        'Bucket': 'image-gallery-app',
+                        'Bucket': request.registry.settings['amazons3.bucketname'],
                         'Key': main_photo.file_name
                     }
                 )
@@ -212,7 +212,7 @@ class GalleryViews:
         request.dbsession.add(photo)
 
         s3 = boto3.client('s3')
-        s3.upload_fileobj(file, 'image-gallery-app', photo.file_name)
+        s3.upload_fileobj(file, request.registry.settings['amazons3.bucketname'], photo.file_name)
 
         return {
             'result': True
